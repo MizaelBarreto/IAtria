@@ -1,32 +1,40 @@
 # IAtria
 
-Sistema de triagem inteligente de leads com:
+Projeto de triagem inteligente de leads com FastAPI, LangGraph, Groq, Supabase, n8n e dashboard em Next.js.
 
-- FastAPI + LangGraph no backend
-- Groq como provedor de IA
-- Supabase para persistencia de leads e metricas
-- n8n para orquestracao
-- Next.js + Recharts para dashboard
+## Link do diagrama
 
-## Estrutura
+Draw.io: http://bit.ly/3N9jX9p
 
-- [agente_triagem.py](/c:/Users/mizae/Documents/IAtria/agente_triagem.py): entrypoint do backend
-- [backend/main.py](/c:/Users/mizae/Documents/IAtria/backend/main.py): API FastAPI
-- [backend/graph.py](/c:/Users/mizae/Documents/IAtria/backend/graph.py): grafo LangGraph
-- [backend/llm.py](/c:/Users/mizae/Documents/IAtria/backend/llm.py): integracao com Groq
-- [backend/supabase.py](/c:/Users/mizae/Documents/IAtria/backend/supabase.py): persistencia de metricas no Supabase
-- [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql): SQL das tabelas `lead_records` e `lead_metrics`
-- [n8n/workflow_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_leads.json): workflow principal do n8n
-- [n8n/workflow_triagem_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_triagem_leads.json): copia equivalente do workflow
-- [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json): 5 payloads de teste
-- [scripts/verify_supabase_insert.py](/c:/Users/mizae/Documents/IAtria/scripts/verify_supabase_insert.py): simulacao local do fluxo do n8n
-- [app/dashboard/page.tsx](/c:/Users/mizae/Documents/IAtria/app/dashboard/page.tsx): dashboard
-- [app/api/metrics/route.ts](/c:/Users/mizae/Documents/IAtria/app/api/metrics/route.ts): agregacao das metricas para o dashboard
-- [vercel.json](/c:/Users/mizae/Documents/IAtria/vercel.json): configuracao do deploy no Vercel
+## Entrega principal
+
+- `README.md`: explica o projeto, os arquivos principais, como rodar e como a solucao foi montada.
+- `requirements.txt`: dependencias Python do backend.
+- `agente_triagem.py`: backend completo em um unico arquivo. Contem configuracao, modelos, cliente Groq, grafo LangGraph, persistencia de metricas no Supabase e rotas FastAPI.
+- `workflow_leads.json`: workflow do n8n com webhook, chamada HTTP para o backend, roteamento por intencao, HubSpot mock e insercao no Supabase.
+- `payloads_teste.json`: exemplos de leads para testar o fluxo.
+
+## Arquivos de apoio
+
+- `sql/create_lead_metrics.sql`: cria as tabelas `lead_records` e `lead_metrics` no Supabase.
+- `app/` e `components/`: dashboard em Next.js com polling e grafico.
+- `vercel.json`: configuracao do deploy no Vercel para publicar frontend e API.
+- `.env.example`: modelo de variaveis de ambiente.
+
+## Como a solucao foi desenvolvida
+
+O projeto foi ajustado para manter a entrega simples sem perder o escopo pedido:
+
+1. O backend foi consolidado em `agente_triagem.py` para evitar excesso de arquivos Python.
+2. O agente usa LangGraph com tres etapas: classificar intencao, analisar sentimento e estruturar a resposta final.
+3. A IA usa Groq em modo compativel com OpenAI SDK.
+4. O backend grava metricas de toda triagem em `lead_metrics`.
+5. O n8n grava apenas `vendas` e `suporte` em `lead_records` e simula HubSpot quando a intencao for `vendas`.
+6. O dashboard consulta `lead_metrics` para mostrar o volume de classificacoes.
 
 ## Variaveis de ambiente
 
-Baseie [`.env`](/c:/Users/mizae/Documents/IAtria/.env) em [`.env.example`](/c:/Users/mizae/Documents/IAtria/.env.example):
+Crie um arquivo `.env` baseado em `.env.example`:
 
 ```env
 SUPABASE_URL=https://fzejfxcdgvlemsclqrku.supabase.co
@@ -39,41 +47,30 @@ TRIAGEM_API_BASE_URL=http://127.0.0.1:8000
 
 ## Banco de dados
 
-Execute [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql) no Supabase. Esse arquivo cria:
+Execute o arquivo `sql/create_lead_metrics.sql` no Supabase. Ele cria:
 
-- `lead_records`: registros de leads classificados como `vendas` ou `suporte`
-- `lead_metrics`: metricas de toda triagem, inclusive `spam`, usadas pelo dashboard
+- `lead_records`: tabela operacional para leads classificados como `vendas` ou `suporte`
+- `lead_metrics`: tabela de metricas da IA, usada pelo dashboard
 
-Se ocorrer `403 permission denied`, reaplique o bloco final de grants do mesmo arquivo para o `service_role`.
+## O que o backend faz
 
-## Backend
-
-Suba a API:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python agente_triagem.py
-```
-
-Rotas principais:
+O `agente_triagem.py` expoe:
 
 - `GET /health`
 - `POST /triagem`
-- `POST /backend/triagem` para deploy no Vercel
+- `GET /backend/health`
+- `POST /backend/triagem`
 
-Exemplo de request:
+Fluxo interno do agente:
 
-```json
-{
-  "nome": "Carla Mendes",
-  "email": "carla.mendes@clinicaviva.com",
-  "mensagem": "Ola, quero entender precos e agendar uma demonstracao da plataforma para minha clinica."
-}
-```
+1. Recebe `nome`, `email` e `mensagem`
+2. Classifica a intencao em `vendas`, `suporte` ou `spam`
+3. Analisa o sentimento em `positivo`, `neutro` ou `negativo`
+4. Aplica fallback para `suporte` + `neutro` se houver falha ou timeout
+5. Salva a metrica no Supabase
+6. Retorna um JSON simples para o n8n
 
-Exemplo de response:
+Exemplo de resposta:
 
 ```json
 {
@@ -83,78 +80,65 @@ Exemplo de response:
 }
 ```
 
-## LangGraph
+## O que o workflow do n8n faz
 
-O grafo do agente contem:
+O arquivo `workflow_leads.json` contem:
 
-1. Classificacao de intencao
-2. Analise de sentimento
-3. Estruturacao da resposta
+1. Webhook de entrada
+2. Normalizacao do payload
+3. Requisicao HTTP para a API de triagem
+4. Switch por intencao
+5. HubSpot mock para `vendas`
+6. Insercao em `lead_records` para `vendas` e `suporte`
+7. Ignora `spam` no banco operacional
 
-Ha tratamento basico de erro e fallback automatico para `suporte` + `neutro`.
-
-## n8n
-
-Importe [n8n/workflow_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_leads.json).
-
-Fluxo:
-
-1. Webhook recebe `nome`, `email` e `mensagem`
-2. HTTP Request chama `POST /triagem`
-3. Switch separa `vendas`, `suporte` e `spam`
-4. `vendas` vai para HubSpot mock e tambem para `lead_records`
-5. `suporte` vai para `lead_records`
-6. `spam` nao vai para `lead_records`
-7. As metricas da IA sao salvas pelo backend em `lead_metrics`
-
-Para trocar `localhost` pelo endpoint publicado, configure no n8n:
+Variavel recomendada no n8n:
 
 ```text
-TRIAGEM_API_URL=https://seu-projeto.vercel.app/backend/triagem
+TRIAGEM_API_URL=https://iatria.vercel.app/backend/triagem
 ```
 
-## Frontend
+## Como rodar localmente
 
-Suba o dashboard:
+Backend:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python agente_triagem.py
+```
+
+Frontend:
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Acesse:
+URLs locais:
 
-- `http://localhost:3000/dashboard`
+- API: `http://127.0.0.1:8000/triagem`
+- Docs: `http://127.0.0.1:8000/docs`
+- Dashboard: `http://localhost:3000/dashboard`
 
-Em ambiente local, o dashboard usa [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json) para disparar testes reais contra a API.
+## Como testar
 
-## Verificacao local
+1. Use os exemplos de `payloads_teste.json` no webhook do n8n ou em chamadas diretas para a API.
+2. Verifique se `vendas` aciona o HubSpot mock.
+3. Verifique se apenas `vendas` e `suporte` entram em `lead_records`.
+4. Verifique se todas as triagens entram em `lead_metrics`.
+5. Acompanhe o resumo das metricas pelo dashboard.
 
-Para simular o comportamento do n8n sem abrir o n8n:
+## Deploy
 
-```powershell
-.\.venv\Scripts\python scripts\verify_supabase_insert.py --sample-index 0
-```
-
-Esse script:
-
-1. Chama a API local de triagem
-2. Se `vendas`, simula o envio ao HubSpot mock
-3. Se `vendas` ou `suporte`, insere em `lead_records`
-4. Valida o registro em `lead_records`
-5. Valida a metrica correspondente em `lead_metrics`
-
-## Vercel
-
-O deploy esta preparado para:
+O projeto esta pronto para Vercel com:
 
 - frontend em `/`
 - dashboard em `/dashboard`
 - API FastAPI em `/backend`
 
-Se frontend e API ficarem no mesmo projeto do Vercel, nao e necessario alterar codigo depois de obter a URL final.
-
-Se a API ficar em outro projeto, ajuste apenas as variaveis:
+Se frontend e API estiverem no mesmo projeto, nao e necessario alterar codigo apos o deploy. Se a API ficar em outro dominio, ajuste apenas:
 
 - `TRIAGEM_API_BASE_URL=https://sua-api.vercel.app/backend`
 - `TRIAGEM_API_URL=https://sua-api.vercel.app/backend/triagem`

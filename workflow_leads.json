@@ -46,7 +46,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.TRIAGEM_API_URL || \"http://localhost:8000/triagem\" }}",
+        "url": "={{ $env.TRIAGEM_API_URL || \"https://iatria.vercel.app/backend/triagem\" }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",

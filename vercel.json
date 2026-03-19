@@ -7,7 +7,7 @@
       "routePrefix": "/"
     },
     "api": {
-      "entrypoint": "backend/main.py",
+      "entrypoint": "agente_triagem.py",
       "framework": "fastapi",
       "routePrefix": "/backend",
       "memory": 1024,
@@ -15,9 +15,11 @@
       "excludeFiles": [
         "app/**",
         "components/**",
-        "n8n/**",
         ".next/**",
         "node_modules/**",
+        "payloads_teste.json",
+        "sql/**",
+        "workflow_leads.json",
         "fluxograma_tobe.drawio",
         "README.md"
       ]
