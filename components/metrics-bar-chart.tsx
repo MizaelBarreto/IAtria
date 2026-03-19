@@ -2,7 +2,11 @@
 
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-const COLORS = ["#d85f3d", "#1d6f5f", "#bfa236"];
+const COLORS_BY_INTENT: Record<string, string> = {
+  vendas: "#1d6f5f",
+  suporte: "#bfa236",
+  spam: "#d85f3d",
+};
 
 type Props = {
   data: Array<{ intent: string; total: number }>;
@@ -26,7 +30,7 @@ export default function MetricsBarChart({ data }: Props) {
           />
           <Bar dataKey="total" radius={[14, 14, 6, 6]}>
             {data.map((entry, index) => (
-              <Cell key={`${entry.intent}-${index}`} fill={COLORS[index % COLORS.length]} />
+              <Cell key={`${entry.intent}-${index}`} fill={COLORS_BY_INTENT[entry.intent] ?? "#1b2631"} />
             ))}
           </Bar>
         </BarChart>
