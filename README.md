@@ -38,6 +38,8 @@ TRIAGEM_API_BASE_URL=http://127.0.0.1:8000
 
 Execute o SQL de [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql) no Supabase para criar a tabela `lead_metrics`.
 
+Se a tabela já existir e a API retornar `403 permission denied for table lead_metrics`, reaplique o bloco final de permissões do mesmo arquivo para conceder acesso ao `service_role` usado pelo backend e pelo dashboard server-side.
+
 ## Como rodar o backend
 
 1. Crie o ambiente virtual:

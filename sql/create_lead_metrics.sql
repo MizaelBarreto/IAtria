@@ -10,3 +10,8 @@ create table if not exists public.lead_metrics (
     fallback boolean not null default false,
     created_at timestamptz not null default timezone('utc', now())
 );
+
+alter table public.lead_metrics enable row level security;
+
+grant usage on schema public to service_role;
+grant select, insert, update, delete on table public.lead_metrics to service_role;
