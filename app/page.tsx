@@ -7,9 +7,9 @@ export default function HomePage() {
     <main className="landing-shell">
       <section className="hero-card">
         <p className="eyebrow">IAtria</p>
-        <h1>Esteira de triagem inteligente para leads com IA e automacao.</h1>
+        <h1>Esteira de triagem inteligente para leads com IA e automação.</h1>
         <p className="hero-copy">
-          Backend FastAPI com LangGraph e Groq, integracao com Supabase, workflow n8n e dashboard em tempo real.
+          Backend FastAPI com LangGraph e Groq, integração com Supabase, workflow n8n e dashboard em tempo real.
         </p>
         <div className="hero-actions">
           <Link className="primary-link" href="/dashboard">
