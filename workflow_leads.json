@@ -46,7 +46,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.TRIAGEM_API_URL || \"https://iatria.vercel.app/backend/triagem\" }}",
+        "url": "https://iatria.vercel.app/backend/triagem",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",
@@ -205,17 +205,17 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.SUPABASE_URL + \"/rest/v1/lead_records\" }}",
+        "url": "https://YOUR_PROJECT.supabase.co/rest/v1/lead_records",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $env.SUPABASE_KEY }}"
+              "value": "YOUR_SUPABASE_KEY"
             },
             {
               "name": "Authorization",
-              "value": "={{ \"Bearer \" + $env.SUPABASE_KEY }}"
+              "value": "Bearer YOUR_SUPABASE_KEY"
             },
             {
               "name": "Content-Type",
@@ -236,7 +236,9 @@
       "name": "Supabase Insert Lead",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1420, 380]
+      "position": [1420, 380],
+      "notes": "Após importar, substitua a URL e a chave do Supabase neste node.",
+      "notesInFlow": true
     },
     {
       "parameters": {
