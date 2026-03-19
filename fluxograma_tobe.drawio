@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
   <diagram name="Fluxo Leads IA" id="szsDpftF9SAXZ7QJtl6j">
-    <mxGraphModel dx="987010" dy="802670" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="27506" dy="19330" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -83,16 +83,16 @@
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-16" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-2" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-3" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-17" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-3" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-4" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-19" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-4" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-6" />
-        <mxCell id="GcYM5PJMcwH11Mfm8V3n-20" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-6" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-7" />
-        <mxCell id="GcYM5PJMcwH11Mfm8V3n-21" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-7" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-8" />
+        <mxCell id="GcYM5PJMcwH11Mfm8V3n-20" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-6" style="fontColor=#000000;" />
+        <mxCell id="GcYM5PJMcwH11Mfm8V3n-21" edge="1" parent="1" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-8" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-22" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-8" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-9" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-23" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-8" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-10" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-24" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-9" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-10" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-25" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-10" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-11" />
-        <mxCell id="GcYM5PJMcwH11Mfm8V3n-26" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-10" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-12" />
+        <mxCell id="GcYM5PJMcwH11Mfm8V3n-26" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-10" style="fontColor=#000000;" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-27" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-10" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-13" />
-        <mxCell id="GcYM5PJMcwH11Mfm8V3n-28" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-11" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-12" />
-        <mxCell id="GcYM5PJMcwH11Mfm8V3n-29" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-12" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-14" />
+        <mxCell id="GcYM5PJMcwH11Mfm8V3n-28" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-11" style="fontColor=#000000;" />
+        <mxCell id="GcYM5PJMcwH11Mfm8V3n-29" edge="1" parent="1" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-14" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-30" edge="1" parent="1" source="GcYM5PJMcwH11Mfm8V3n-13" style="fontColor=#000000;" target="GcYM5PJMcwH11Mfm8V3n-14" />
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-47" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;rounded=1;" value="Webhook Entrada Lead" vertex="1">
           <mxGeometry height="95" width="220" x="-692.5" y="-584" as="geometry" />
@@ -129,6 +129,18 @@
         </mxCell>
         <mxCell id="GcYM5PJMcwH11Mfm8V3n-96" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;rounded=1;" value="&lt;span style=&quot;color: rgb(237, 237, 237); text-wrap-mode: nowrap;&quot;&gt;Relatório de triagem&lt;/span&gt;" vertex="1">
           <mxGeometry height="120" width="245" x="-705" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="avVrZtvywsRIBX31C4WD-1" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Não" vertex="1">
+          <mxGeometry height="30" width="60" x="-527.5" y="-210" as="geometry" />
+        </mxCell>
+        <mxCell id="avVrZtvywsRIBX31C4WD-2" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sim" vertex="1">
+          <mxGeometry height="30" width="60" x="-630" y="-170" as="geometry" />
+        </mxCell>
+        <mxCell id="avVrZtvywsRIBX31C4WD-3" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Sim" vertex="1">
+          <mxGeometry height="30" width="60" x="-630" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="avVrZtvywsRIBX31C4WD-4" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Não" vertex="1">
+          <mxGeometry height="30" width="60" x="-532.5" y="210" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
