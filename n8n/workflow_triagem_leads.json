@@ -46,7 +46,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://localhost:8000/triagem",
+        "url": "={{ $env.TRIAGEM_API_URL || \"http://localhost:8000/triagem\" }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ $json }}",

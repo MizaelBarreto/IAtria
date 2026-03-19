@@ -169,8 +169,15 @@ Fluxo do workflow:
 5. Leads de vendas seguem para um HubSpot mock.
 6. Todos os leads são persistidos no Supabase.
 
+Para trocar de `localhost` para o endpoint publicado, configure a variável `TRIAGEM_API_URL` no n8n. Exemplo em produção:
+
+```text
+https://seu-projeto.vercel.app/backend/triagem
+```
+
 ## Arquivos auxiliares
 
 - [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json): exemplos para testar a API
 - [package.json](/c:/Users/mizae/Documents/IAtria/package.json): dependências do frontend
 - [requirements.txt](/c:/Users/mizae/Documents/IAtria/requirements.txt): dependências do backend
+- [scripts/verify_supabase_insert.py](/c:/Users/mizae/Documents/IAtria/scripts/verify_supabase_insert.py): valida inserção real no Supabase após a triagem
