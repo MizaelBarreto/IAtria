@@ -1,3 +1,5 @@
+"""Serviço de triagem de leads com FastAPI, LangGraph, Groq e Supabase."""
+
 import json
 import logging
 from datetime import datetime, timezone
@@ -17,6 +19,7 @@ from typing_extensions import TypedDict
 Intent = Literal["vendas", "suporte", "spam"]
 Sentiment = Literal["positivo", "neutro", "negativo"]
 
+# Prompts e tipos aceitos pelo agente.
 INTENT_PROMPT = """
 Voce classifica leads recebidos por uma empresa de software medico.
 Analise a mensagem e responda APENAS JSON valido no formato:
@@ -49,6 +52,7 @@ VALID_SENTIMENTS = {"positivo", "neutro", "negativo"}
 
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
+        """Serializa o log em JSON para facilitar observabilidade."""
         payload: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
@@ -67,6 +71,7 @@ class JsonFormatter(logging.Formatter):
 
 
 def configure_logging() -> None:
+    """Configura o logger raiz apenas uma vez para evitar duplicidade."""
     root_logger = logging.getLogger()
     if root_logger.handlers:
         return
@@ -96,6 +101,7 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    """Carrega e mantém em cache as variáveis de ambiente da aplicação."""
     return Settings()
 
 
@@ -131,6 +137,8 @@ class GraphState(TypedDict, total=False):
 
 
 class GroqLeadClassifier:
+    """Encapsula as chamadas para o modelo e normaliza a saída da IA."""
+
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
         self.client = OpenAI(
@@ -140,16 +148,19 @@ class GroqLeadClassifier:
         )
 
     def classify_intent(self, lead: LeadInput) -> tuple[Intent, str]:
+        """Solicita ao modelo a intenção do lead e valida o valor recebido."""
         payload = self._invoke_json(INTENT_PROMPT, lead)
         intent = self._normalize_intent(payload.get("intent"))
         return intent, json.dumps(payload, ensure_ascii=False)
 
     def classify_sentiment(self, lead: LeadInput) -> tuple[Sentiment, str]:
+        """Solicita ao modelo o sentimento predominante da mensagem."""
         payload = self._invoke_json(SENTIMENT_PROMPT, lead)
         sentiment = self._normalize_sentiment(payload.get("sentiment"))
         return sentiment, json.dumps(payload, ensure_ascii=False)
 
     def _invoke_json(self, system_prompt: str, lead: LeadInput) -> dict[str, Any]:
+        """Tenta obter JSON estrito e recua para uma chamada simples se necessário."""
         messages = [
             {"role": "system", "content": system_prompt},
             {
@@ -173,6 +184,7 @@ class GroqLeadClassifier:
         return parsed
 
     def _create_completion(self, messages: list[dict[str, str]], enforce_json: bool) -> str:
+        """Envia a requisição ao modelo com ou sem `response_format`."""
         kwargs: dict[str, Any] = {
             "model": self.settings.groq_model,
             "temperature": 0,
@@ -188,6 +200,7 @@ class GroqLeadClassifier:
         return content
 
     def _parse_json(self, content: str) -> dict[str, Any]:
+        """Extrai o JSON mesmo quando a resposta vem envolvida por markdown."""
         normalized = content.strip()
         if normalized.startswith("```"):
             normalized = normalized.replace("```json", "").replace("```", "").strip()
@@ -211,10 +224,12 @@ class GroqLeadClassifier:
 
 
 def build_triagem_graph(classifier: GroqLeadClassifier):
+    """Monta o fluxo LangGraph com intenção, sentimento e resposta final."""
     logger = logging.getLogger(__name__)
     graph = StateGraph(GraphState)
 
     def classificar_intencao(state: GraphState) -> GraphState:
+        """Executa o primeiro nó do grafo e faz fallback em caso de falha."""
         lead = state["lead"]
         try:
             intent, raw = classifier.classify_intent(lead)
@@ -232,6 +247,7 @@ def build_triagem_graph(classifier: GroqLeadClassifier):
             }
 
     def analisar_sentimento(state: GraphState) -> GraphState:
+        """Executa o segundo nó do grafo e preserva o fallback quando necessário."""
         lead = state["lead"]
         try:
             sentiment, raw = classifier.classify_sentiment(lead)
@@ -253,6 +269,7 @@ def build_triagem_graph(classifier: GroqLeadClassifier):
             }
 
     def estruturar_resposta(state: GraphState) -> GraphState:
+        """Normaliza o estado final do grafo no formato de saída da API."""
         response = TriagemOutput(
             intent=state.get("intent", "suporte"),
             sentiment=state.get("sentiment", "neutro"),
@@ -273,6 +290,7 @@ def build_triagem_graph(classifier: GroqLeadClassifier):
 
 
 def salvar_metricas_supabase(data: dict, settings: Settings | None = None) -> None:
+    """Persiste métricas da triagem sem interromper a resposta da API."""
     active_settings = settings or get_settings()
     logger = logging.getLogger(__name__)
     url = f"{active_settings.supabase_url.rstrip('/')}/rest/v1/lead_metrics"
@@ -297,6 +315,7 @@ def salvar_metricas_supabase(data: dict, settings: Settings | None = None) -> No
         )
 
 
+# Inicialização das dependências principais da aplicação.
 configure_logging()
 settings = get_settings()
 logger = logging.getLogger(__name__)
@@ -313,12 +332,14 @@ app = FastAPI(
 @app.get("/health")
 @app.get("/backend/health", include_in_schema=False)
 def health() -> dict[str, str]:
+    """Retorna um status simples para monitoramento e smoke tests."""
     return {"status": "ok"}
 
 
 @app.post("/triagem", response_model=TriagemOutput)
 @app.post("/backend/triagem", response_model=TriagemOutput, include_in_schema=False)
 async def triagem(payload: LeadInput) -> TriagemOutput:
+    """Executa a triagem completa, aplica fallback global e salva a métrica."""
     logger.info(
         "triagem_requested",
         extra={"context": {"email": payload.email, "nome": payload.nome}},
