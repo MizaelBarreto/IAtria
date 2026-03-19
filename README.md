@@ -12,14 +12,14 @@ Plataforma de triagem inteligente de leads com FastAPI, LangGraph, Groq, Supabas
 ## Teste rápido
 
 1. Importe `workflow_leads.json` no n8n.
-2. Abra o node `Supabase Insert Lead`.
-3. Substitua `YOUR_PROJECT` e `YOUR_SUPABASE_KEY` pelos dados do seu projeto Supabase.
-4. Envie um payload de `payloads_teste.json` para o webhook.
-5. Verifique a execução no n8n e a atualização no dashboard.
+2. Ative o workflow.
+3. Envie um payload de `payloads_teste.json` para o webhook.
+4. Verifique a execução no n8n.
+5. Acompanhe a atualização do dashboard em `https://iatria.vercel.app/dashboard`.
 
 Observação:
-- A URL da API já está fixa no workflow: `https://iatria.vercel.app/backend/triagem`
-- Após importar, o único ajuste necessário é no node do Supabase
+- As chaves expostas no `workflow_leads.json` foram mantidas apenas por se tratar de um teste fictício de aplicação, para avaliação interna do fluxo.
+- Em um cenário real, essas credenciais deveriam ficar em variáveis de ambiente ou credenciais seguras do n8n.
 
 ## Entregáveis
 

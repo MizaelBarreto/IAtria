@@ -12,7 +12,10 @@
       "name": "Webhook Leads",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [220, 300]
+      "position": [
+        220,
+        300
+      ]
     },
     {
       "parameters": {
@@ -41,7 +44,10 @@
       "name": "Normalizar Lead",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -58,7 +64,10 @@
       "name": "Triagem Backend",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     },
     {
       "parameters": {
@@ -102,7 +111,10 @@
       "name": "Preparar Registro Lead",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [930, 300]
+      "position": [
+        930,
+        300
+      ]
     },
     {
       "parameters": {
@@ -185,7 +197,10 @@
       "name": "Switch Intent",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
-      "position": [1170, 300]
+      "position": [
+        1170,
+        300
+      ]
     },
     {
       "parameters": {
@@ -200,22 +215,25 @@
       "name": "HubSpot Mock",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1420, 220]
+      "position": [
+        1420,
+        220
+      ]
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://YOUR_PROJECT.supabase.co/rest/v1/lead_records",
+        "url": "https://fzejfxcdgvlemsclqrku.supabase.co/rest/v1/lead_records",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "YOUR_SUPABASE_KEY"
+              "value": "sb_secret_hCrrGcBGpQgCBv2eT0xUeQ_cbxtcZp6"
             },
             {
               "name": "Authorization",
-              "value": "Bearer YOUR_SUPABASE_KEY"
+              "value": "Bearer sb_secret_hCrrGcBGpQgCBv2eT0xUeQ_cbxtcZp6"
             },
             {
               "name": "Content-Type",
@@ -236,9 +254,10 @@
       "name": "Supabase Insert Lead",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1420, 380],
-      "notes": "Após importar, substitua a URL e a chave do Supabase neste node.",
-      "notesInFlow": true
+      "position": [
+        1420,
+        380
+      ]
     },
     {
       "parameters": {
@@ -267,7 +286,10 @@
       "name": "Spam Ignorado",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [1420, 520]
+      "position": [
+        1420,
+        520
+      ]
     }
   ],
   "connections": {
