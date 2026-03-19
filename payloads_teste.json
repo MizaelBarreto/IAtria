@@ -2,16 +2,26 @@
   {
     "nome": "Carla Mendes",
     "email": "carla.mendes@clinicaviva.com",
-    "mensagem": "Olá, quero entender preços e agendar uma demonstração da plataforma para minha clínica."
+    "mensagem": "Ola, quero entender precos e agendar uma demonstracao da plataforma para minha clinica."
   },
   {
-    "nome": "João Silva",
+    "nome": "Joao Silva",
     "email": "joao.silva@clinicaviva.com",
-    "mensagem": "O sistema está travando na tela de login e preciso de ajuda urgente."
+    "mensagem": "O sistema esta travando na tela de login e preciso de ajuda urgente."
   },
   {
     "nome": "Oferta Digital",
     "email": "contato@midiaspam.com",
-    "mensagem": "Aumente seus seguidores agora com nosso pacote promocional e campanhas automáticas."
+    "mensagem": "Aumente seus seguidores agora com nosso pacote promocional e campanhas automaticas."
+  },
+  {
+    "nome": "Marina Costa",
+    "email": "marina.costa@institutosaude.com",
+    "mensagem": "Boa tarde, gostaria de saber se voces oferecem implantacao para uma rede com 12 clinicas."
+  },
+  {
+    "nome": "Rafael Nunes",
+    "email": "rafael.nunes@hospitalnova.com",
+    "mensagem": "Estou com dificuldade para emitir relatorios e preciso de orientacao sobre o modulo financeiro."
   }
 ]

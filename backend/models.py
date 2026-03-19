@@ -4,6 +4,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing_extensions import TypedDict
 
 Intent = Literal["vendas", "suporte", "spam"]
+QualifiedLeadIntent = Literal["vendas", "suporte"]
 Sentiment = Literal["positivo", "neutro", "negativo"]
 
 
@@ -24,6 +25,15 @@ class LeadMetricRecord(BaseModel):
     email: EmailStr
     mensagem: str
     intent: Intent
+    sentiment: Sentiment
+    fallback: bool
+
+
+class LeadRecord(BaseModel):
+    nome: str
+    email: EmailStr
+    mensagem: str
+    intent: QualifiedLeadIntent
     sentiment: Sentiment
     fallback: bool
 

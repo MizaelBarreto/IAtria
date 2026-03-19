@@ -1,11 +1,11 @@
 # IAtria
 
-Sistema completo de triagem inteligente de leads com:
+Sistema de triagem inteligente de leads com:
 
 - FastAPI + LangGraph no backend
 - Groq como provedor de IA
-- Supabase para persistência de métricas
-- n8n para automação
+- Supabase para persistencia de leads e metricas
+- n8n para orquestracao
 - Next.js + Recharts para dashboard
 
 ## Estrutura
@@ -13,17 +13,20 @@ Sistema completo de triagem inteligente de leads com:
 - [agente_triagem.py](/c:/Users/mizae/Documents/IAtria/agente_triagem.py): entrypoint do backend
 - [backend/main.py](/c:/Users/mizae/Documents/IAtria/backend/main.py): API FastAPI
 - [backend/graph.py](/c:/Users/mizae/Documents/IAtria/backend/graph.py): grafo LangGraph
-- [backend/llm.py](/c:/Users/mizae/Documents/IAtria/backend/llm.py): integração com Groq
-- [backend/supabase.py](/c:/Users/mizae/Documents/IAtria/backend/supabase.py): persistência no Supabase
-- [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql): SQL da tabela
-- [n8n/workflow_triagem_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_triagem_leads.json): workflow do n8n
+- [backend/llm.py](/c:/Users/mizae/Documents/IAtria/backend/llm.py): integracao com Groq
+- [backend/supabase.py](/c:/Users/mizae/Documents/IAtria/backend/supabase.py): persistencia de metricas no Supabase
+- [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql): SQL das tabelas `lead_records` e `lead_metrics`
+- [n8n/workflow_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_leads.json): workflow principal do n8n
+- [n8n/workflow_triagem_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_triagem_leads.json): copia equivalente do workflow
+- [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json): 5 payloads de teste
+- [scripts/verify_supabase_insert.py](/c:/Users/mizae/Documents/IAtria/scripts/verify_supabase_insert.py): simulacao local do fluxo do n8n
 - [app/dashboard/page.tsx](/c:/Users/mizae/Documents/IAtria/app/dashboard/page.tsx): dashboard
-- [app/api/metrics/route.ts](/c:/Users/mizae/Documents/IAtria/app/api/metrics/route.ts): leitura agregada do Supabase
-- [next.config.mjs](/c:/Users/mizae/Documents/IAtria/next.config.mjs): configuração do Next.js
+- [app/api/metrics/route.ts](/c:/Users/mizae/Documents/IAtria/app/api/metrics/route.ts): agregacao das metricas para o dashboard
+- [vercel.json](/c:/Users/mizae/Documents/IAtria/vercel.json): configuracao do deploy no Vercel
 
-## Variáveis de ambiente
+## Variaveis de ambiente
 
-Arquivo [`.env`](/c:/Users/mizae/Documents/IAtria/.env) baseado em [`.env.example`](/c:/Users/mizae/Documents/IAtria/.env.example):
+Baseie [`.env`](/c:/Users/mizae/Documents/IAtria/.env) em [`.env.example`](/c:/Users/mizae/Documents/IAtria/.env.example):
 
 ```env
 SUPABASE_URL=https://fzejfxcdgvlemsclqrku.supabase.co
@@ -36,112 +39,41 @@ TRIAGEM_API_BASE_URL=http://127.0.0.1:8000
 
 ## Banco de dados
 
-Execute o SQL de [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql) no Supabase para criar a tabela `lead_metrics`.
+Execute [sql/create_lead_metrics.sql](/c:/Users/mizae/Documents/IAtria/sql/create_lead_metrics.sql) no Supabase. Esse arquivo cria:
 
-Se a tabela já existir e a API retornar `403 permission denied for table lead_metrics`, reaplique o bloco final de permissões do mesmo arquivo para conceder acesso ao `service_role` usado pelo backend e pelo dashboard server-side.
+- `lead_records`: registros de leads classificados como `vendas` ou `suporte`
+- `lead_metrics`: metricas de toda triagem, inclusive `spam`, usadas pelo dashboard
 
-## Como rodar o backend
+Se ocorrer `403 permission denied`, reaplique o bloco final de grants do mesmo arquivo para o `service_role`.
 
-1. Crie o ambiente virtual:
+## Backend
+
+Suba a API:
 
 ```powershell
 python -m venv .venv
-```
-
-2. Ative o ambiente virtual:
-
-```powershell
 .\.venv\Scripts\Activate.ps1
-```
-
-3. Instale as dependências:
-
-```powershell
 pip install -r requirements.txt
-```
-
-4. Inicie a API:
-
-```powershell
 python agente_triagem.py
 ```
 
-5. Acesse:
+Rotas principais:
 
-- API: `http://localhost:8000`
-- Swagger: `http://localhost:8000/docs`
-- Healthcheck: `http://localhost:8000/health`
+- `GET /health`
+- `POST /triagem`
+- `POST /backend/triagem` para deploy no Vercel
 
-## Como rodar o frontend
-
-1. Instale as dependências:
-
-```powershell
-npm install
-```
-
-2. Inicie o Next.js:
-
-```powershell
-npm run dev
-```
-
-3. Acesse:
-
-- Home: `http://localhost:3000`
-- Dashboard: `http://localhost:3000/dashboard`
-- Proxy local de triagem: `http://localhost:3000/api/triagem`
-
-## Testes locais com IA
-
-O dashboard em [app/dashboard/page.tsx](/c:/Users/mizae/Documents/IAtria/app/dashboard/page.tsx) exibe um painel de testes em desenvolvimento usando [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json).
-
-Fluxo:
-
-1. Preencha [`.env`](/c:/Users/mizae/Documents/IAtria/.env) com as chaves reais.
-2. Suba o backend com `python agente_triagem.py`.
-3. Suba o frontend com `npm run dev`.
-4. Abra `http://localhost:3000/dashboard`.
-5. Use `Testar IA` ou `Executar todos`.
-
-Cada teste chama a rota Next `/api/triagem`, que faz proxy para a API Python e depois atualiza os cards e o gráfico.
-
-## Vercel
-
-Arquivos preparados para deploy:
-
-- [vercel.json](/c:/Users/mizae/Documents/IAtria/vercel.json): configuração de serviços
-- [.python-version](/c:/Users/mizae/Documents/IAtria/.python-version): versão Python para deploy
-
-Estratégia de deploy:
-
-1. Serviço `web` com Next.js na raiz `/`
-2. Serviço `api` com FastAPI na raiz `/backend`
-3. Dashboard público em `/dashboard`
-4. API pública em `/backend/triagem`
-
-Passos:
-
-1. No Vercel, configure o projeto com framework `Services`.
-2. Defina as variáveis `SUPABASE_URL`, `SUPABASE_KEY`, `GROQ_API_KEY`, `GROQ_MODEL`, `LLM_TIMEOUT_SECONDS`.
-3. Se quiser sobrescrever o proxy, defina `TRIAGEM_API_BASE_URL`.
-4. Rode localmente com `npm run dev:vercel` ou publique com `npx vercel --prod`.
-
-## Endpoint de triagem
-
-`POST /triagem`
-
-Payload:
+Exemplo de request:
 
 ```json
 {
   "nome": "Carla Mendes",
   "email": "carla.mendes@clinicaviva.com",
-  "mensagem": "Olá, quero entender preços e agendar uma demonstração da plataforma para minha clínica."
+  "mensagem": "Ola, quero entender precos e agendar uma demonstracao da plataforma para minha clinica."
 }
 ```
 
-Resposta:
+Exemplo de response:
 
 ```json
 {
@@ -151,35 +83,78 @@ Resposta:
 }
 ```
 
-## Resiliência
+## LangGraph
 
-- Timeout configurável via `LLM_TIMEOUT_SECONDS`
-- `try/except` no fluxo de intenção e sentimento
-- Fallback automático para `intent="suporte"` e `sentiment="neutro"`
-- Persistência no Supabase mesmo quando houver fallback
+O grafo do agente contem:
+
+1. Classificacao de intencao
+2. Analise de sentimento
+3. Estruturacao da resposta
+
+Ha tratamento basico de erro e fallback automatico para `suporte` + `neutro`.
 
 ## n8n
 
-Importe [n8n/workflow_triagem_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_triagem_leads.json) no n8n.
+Importe [n8n/workflow_leads.json](/c:/Users/mizae/Documents/IAtria/n8n/workflow_leads.json).
 
-Fluxo do workflow:
+Fluxo:
 
-1. Webhook recebe o lead.
-2. O lead é normalizado.
-3. O n8n chama `POST /triagem`.
-4. O `Switch` separa por intenção.
-5. Leads de vendas seguem para um HubSpot mock.
-6. Todos os leads são persistidos no Supabase.
+1. Webhook recebe `nome`, `email` e `mensagem`
+2. HTTP Request chama `POST /triagem`
+3. Switch separa `vendas`, `suporte` e `spam`
+4. `vendas` vai para HubSpot mock e tambem para `lead_records`
+5. `suporte` vai para `lead_records`
+6. `spam` nao vai para `lead_records`
+7. As metricas da IA sao salvas pelo backend em `lead_metrics`
 
-Para trocar de `localhost` para o endpoint publicado, configure a variável `TRIAGEM_API_URL` no n8n. Exemplo em produção:
+Para trocar `localhost` pelo endpoint publicado, configure no n8n:
 
 ```text
-https://seu-projeto.vercel.app/backend/triagem
+TRIAGEM_API_URL=https://seu-projeto.vercel.app/backend/triagem
 ```
 
-## Arquivos auxiliares
+## Frontend
 
-- [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json): exemplos para testar a API
-- [package.json](/c:/Users/mizae/Documents/IAtria/package.json): dependências do frontend
-- [requirements.txt](/c:/Users/mizae/Documents/IAtria/requirements.txt): dependências do backend
-- [scripts/verify_supabase_insert.py](/c:/Users/mizae/Documents/IAtria/scripts/verify_supabase_insert.py): valida inserção real no Supabase após a triagem
+Suba o dashboard:
+
+```powershell
+npm install
+npm run dev
+```
+
+Acesse:
+
+- `http://localhost:3000/dashboard`
+
+Em ambiente local, o dashboard usa [payloads_teste.json](/c:/Users/mizae/Documents/IAtria/payloads_teste.json) para disparar testes reais contra a API.
+
+## Verificacao local
+
+Para simular o comportamento do n8n sem abrir o n8n:
+
+```powershell
+.\.venv\Scripts\python scripts\verify_supabase_insert.py --sample-index 0
+```
+
+Esse script:
+
+1. Chama a API local de triagem
+2. Se `vendas`, simula o envio ao HubSpot mock
+3. Se `vendas` ou `suporte`, insere em `lead_records`
+4. Valida o registro em `lead_records`
+5. Valida a metrica correspondente em `lead_metrics`
+
+## Vercel
+
+O deploy esta preparado para:
+
+- frontend em `/`
+- dashboard em `/dashboard`
+- API FastAPI em `/backend`
+
+Se frontend e API ficarem no mesmo projeto do Vercel, nao e necessario alterar codigo depois de obter a URL final.
+
+Se a API ficar em outro projeto, ajuste apenas as variaveis:
+
+- `TRIAGEM_API_BASE_URL=https://sua-api.vercel.app/backend`
+- `TRIAGEM_API_URL=https://sua-api.vercel.app/backend/triagem`
